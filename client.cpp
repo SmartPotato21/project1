@@ -9,7 +9,7 @@
 #define MAX_BUFFER 1024
 
 
-int strlen(char* string)        //i dont like string.h
+int strlen(char* string)        
 {
     int len = 0;
     while (string[0] != '\0')
@@ -21,7 +21,7 @@ int strlen(char* string)        //i dont like string.h
     return len;
 }   
 
-bool check_for_end(char* buffer, int read_limit)
+bool check_for_end(char* buffer, int read_limit) // parse the messages received for 0
 {
     for (int i = 0; i < read_limit; i++)
     {
@@ -50,7 +50,7 @@ int main ()
     connect(server_socket, (struct sockaddr*)&socket_addr, sizeof(socket_addr)); 
 
 
-    //boiler plate cpp socket ^
+    //boiler plate cpp socket 
 
     char header[64] = "Client of  "; 
     const char* username = getlogin();
@@ -58,7 +58,7 @@ int main ()
 
     char message2[] = "\nQuery file name\n";
     send(server_socket, header, strlen(header), 0);
-    send(server_socket, message2, strlen(message2), 0);
+    send(server_socket, message2, strlen(message2), 0); //send messages on connection
 
 
     char read_buffer[MAX_BUFFER];
@@ -75,10 +75,8 @@ int main ()
         send(server_socket, buffer, strlen(buffer), 0);
         if (strncmp(buffer, "Start", 5) == 0)
         {
-            
             while (true)
             {
-
                 char read_buffer[MAX_BUFFER];
                 int size_n = recv(server_socket, read_buffer, MAX_BUFFER, 0);
                 std::cout.write(read_buffer, size_n) << std::flush;
@@ -86,12 +84,8 @@ int main ()
                 {
                     close(server_socket);
                     exit(EXIT_SUCCESS);
-                }
-                   
-
-                
+                }   
             }
-
         }
     }
 

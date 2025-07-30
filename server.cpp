@@ -33,28 +33,22 @@ int handleClient(int client_fd)
             return 1;
         }
 
-        if (strncmp(buffer, "Start", 5) == 0)
+        if (strncmp(buffer, "Start", 5) == 0)       //on start recieve:
         {
-            
-
-
-
-            long read_count = 0;
+            long read_count = 0;                           
             char read_buffer[READ_MAX_BUFFER];
 
-            while (file_size - read_count > 0)
+            while (file_size - read_count > 0)      //read file into buffer, send those buffers
             {
-                char header_buffer[] = "\n1\n";
-
+                char header_buffer[] = "\n1\n";     //first message in pair
                 send(client_fd, header_buffer, 4, 0);
 
-                int to_read = std::min((long)READ_MAX_BUFFER, file_size - read_count);
-                
+                int to_read = std::min((long)READ_MAX_BUFFER, file_size - read_count);                
                 int read_number = fread(read_buffer, 1, to_read, fp);               
                 read_count = read_count + read_number;
 
                 send(client_fd, read_buffer, (int)read_number,0);
-                std::this_thread::sleep_for(std::chrono::milliseconds(10)); // pause for 500 ms
+                std::this_thread::sleep_for(std::chrono::milliseconds(10)); //make text apear slowly
             }
 
             char end_of_send[] = "\n0\n";
@@ -65,9 +59,8 @@ int handleClient(int client_fd)
             close(client_fd);
             return 1;
         }
-        else if(strncmp(buffer, "Client", 6) == 0)
+        else if(strncmp(buffer, "Client", 6) == 0)  //on client's first message:
         {
-            
             std::cout.write(buffer, size_n) << std::flush;
            
             char* server_name = getlogin();
@@ -111,10 +104,10 @@ int main ()
     listen(server_socket, 4);
     while (true)
     {
-        int client_fd = accept(server_socket, nullptr, nullptr);
+        int client_fd = accept(server_socket, nullptr, nullptr);    //main thread blocked here
         std::cout << client_fd;
         std::thread t(handleClient,client_fd);
-        t.detach();
+        t.detach();                                 //thread dies when returned.
     }
 
 
